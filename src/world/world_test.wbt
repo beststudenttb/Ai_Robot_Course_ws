@@ -1,0 +1,2705 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0.004604009995270156 0.9999050770432613 -0.012986146274915874 0.6808588923148149
+  position -17.505984638928435 6.214653125719476 18.10106869143913
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  texture "noon_cloudy_countryside"
+}
+DEF target Solid {
+  translation 7 7 0.92
+  children [
+    DEF target Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.878431 0.105882 0.141176
+        }
+      }
+      geometry Sphere {
+        radius 0.15
+      }
+    }
+  ]
+  name "target"
+  boundingObject USE target
+  physics Physics {
+    density 10
+  }
+  recognitionColors [
+    1 0.11725 0.277485
+  ]
+}
+RectangleArena {
+  translation 7 7 0
+  floorSize 16 16
+  wallHeight 0.2
+}
+DEF A Pose {
+  translation 14 0 -0.99
+  children [
+    Shape {
+      appearance DEF A_point Appearance {
+        material Material {
+          diffuseColor 1 1 1
+        }
+        name "A_point"
+      }
+      geometry Cylinder {
+      }
+    }
+  ]
+}
+DEF B Pose {
+  translation 14 14 -0.99
+  children [
+    Shape {
+      appearance DEF B_point Appearance {
+        material Material {
+          diffuseColor 1 1 1
+        }
+        name "A_point"
+      }
+      geometry Cylinder {
+      }
+    }
+  ]
+}
+DEF C Pose {
+  translation 0 14 -0.99
+  children [
+    Shape {
+      appearance DEF C_point Appearance {
+        material Material {
+          diffuseColor 1 1 1
+        }
+        name "A_point"
+      }
+      geometry Cylinder {
+      }
+    }
+  ]
+}
+DEF tracker Robot {
+  translation 0 0 0.5
+  children [
+    DEF super Robot {
+      name "super"
+      controller "<extern>"
+      supervisor TRUE
+    }
+    DEF box Pose {
+      translation 0 0 0.07
+      children [
+        DEF D Solid {
+          children [
+            DEF D Shape {
+              appearance Appearance {
+                material Material {
+                  transparency 1
+                }
+              }
+              geometry Box {
+                size 0.32 0.32 0.01
+              }
+              castShadows FALSE
+              isPickable FALSE
+            }
+          ]
+          name "solid(7)"
+          boundingObject USE D
+          physics Physics {
+            density 10
+          }
+        }
+        DEF B Solid {
+          translation -0.16 0 0.16
+          children [
+            DEF B Shape {
+              appearance Appearance {
+                material Material {
+                  transparency 1
+                }
+              }
+              geometry Box {
+                size 0.01 0.32 0.32
+              }
+            }
+          ]
+          name "solid(8)"
+          boundingObject USE B
+          physics Physics {
+            density 10
+          }
+        }
+        DEF R Solid {
+          translation 0 -0.16 0.16
+          children [
+            DEF R Shape {
+              appearance Appearance {
+                material Material {
+                  transparency 1
+                }
+              }
+              geometry Box {
+                size 0.32 0.01 0.32
+              }
+            }
+          ]
+          name "solid(9)"
+          boundingObject USE R
+          physics Physics {
+            density 10
+          }
+        }
+        DEF F Solid {
+          translation 0.16 0 0.16
+          children [
+            DEF F Shape {
+              appearance Appearance {
+                material Material {
+                  transparency 1
+                }
+              }
+              geometry Box {
+                size 0.01 0.32 0.32
+              }
+              castShadows FALSE
+              isPickable FALSE
+            }
+          ]
+          name "solid(10)"
+          boundingObject USE F
+          physics Physics {
+            density 10
+          }
+        }
+        DEF L Solid {
+          translation 0 0.16 0.16
+          children [
+            DEF L Shape {
+              appearance Appearance {
+                material Material {
+                  transparency 1
+                }
+              }
+              geometry Box {
+                size 0.32 0.01 0.32
+              }
+              castShadows FALSE
+              isPickable FALSE
+            }
+          ]
+          name "solid(6)"
+          boundingObject USE L
+          physics Physics {
+            density 10
+          }
+        }
+      ]
+    }
+    SpotLight {
+      attenuation 0 0 0.4
+      beamWidth 0.5
+      direction 2 0 0
+      location 0.3 0 0.3
+      radius 30
+    }
+    DEF w1 Solid {
+      rotation 0 0 1 1.57
+      children [
+        DEF wheel HingeJoint {
+          jointParameters HingeJointParameters {
+            position -0.00014573486087564885
+            axis 1 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor1"
+              maxVelocity 100
+            }
+          ]
+          endPoint Solid {
+            translation -0.0001431207728012535 -0.0005684645121269661 -0.0019479949917347963
+            rotation -0.1793888204033865 -0.9833244157335016 -0.029878830911686572 0.0005816967863615358
+            children [
+              DEF wheel Solid {
+                translation 0.5 0.5 0
+                rotation 0.7071067811865475 -0.7071067811865475 0 1.57
+                children [
+                  Pose {
+                    translation 0 0 0.05
+                    rotation 0 0 1 0.3925
+                    children [
+                      DEF r8 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.507942092601227e-05
+                          axis 1 1 0
+                          anchor -0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.10499999999999873 0.10499999999999704 -0.02499999999999831
+                          rotation -0.7070908301480332 0.7071227315060141 2.2539710453635204e-05 1.5700000005081836
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r8 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r8
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(16)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r7 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004092054639428078
+                          axis 0 -1 0
+                          anchor -0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.14999999999999847 -1.887379141862273e-15 -0.024999999999997722
+                          rotation -0.9999958104505815 0.0020476515536959174 0.00204602160282164 1.5700041895566939
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r7 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r7
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(15)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r6 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004950513330577603
+                          axis 1 -1 0
+                          anchor -0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.1049999999999992 -0.10500000000000138 -0.024999999999999134
+                          rotation -0.7088541033391859 -0.7053507874339907 0.002475246542838539 1.5700061317636465
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r6 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r6
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(14)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r5 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -6.979020723461659e-05
+                          anchor 0 -0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation 8.881784197000302e-16 -0.15000000000000036 -0.024999999999998936
+                          rotation -3.4922902566619576e-05 -0.9999999987813613 3.4895103592952695e-05 1.5700000012180444
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r5 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r5
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(13)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r4 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.5066770108527165e-05
+                          axis 1 1 0
+                          anchor 0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10500000000000066 -0.10500000000000058 -0.02499999999999962
+                          rotation 0.707122727029927 -0.7070908346245239 -2.2533385047252708e-05 1.5700000005078325
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r4 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r4
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(12)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r3 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.00013352722970336924
+                          axis 0 1 0
+                          anchor 0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.1500000000000007 -2.0816681711717362e-15 -0.024999999999999866
+                          rotation 0.9999999955390675 6.681680148677676e-05 -6.67636146535052e-05 1.5700000044602622
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r3 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r3
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(11)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r2 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.9999302224356681
+                          anchor 0 0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation 1.3877787807812591e-15 0.14999999999999655 -0.024999999999998416
+                          rotation -3.49165760316995e-05 0.9999999987818028 -3.4888782132902906e-05 1.5700000012179929
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r2 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r2
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(10)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r1 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -3.000143777426829
+                          axis 1 -1 0
+                          anchor 0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10500000000000054 0.10499999999999723 -0.024999999999998083
+                          rotation -0.46421024937525646 0.5349360200591422 -0.7059407190538363 3.041575088816466
+                          children [
+                            DEF r1 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          name "solid(9)"
+                          boundingObject USE r1
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                    ]
+                  }
+                  DEF r8 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3337186886452912e-05
+                      axis 1 1 0
+                      anchor -0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10499999999999836 0.10499999999999719 -0.02499999999999954
+                      rotation -0.7071115003192172 0.7071020619909374 -6.668593444952646e-06 1.570000000044264
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r8 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r8
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(7)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r7 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.0361759363286458
+                      axis 0 -1 0
+                      anchor -0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.1499999999999984 -1.887379141862233e-15 -0.02500000000000002
+                      rotation -0.9996726540331781 0.018098425920557274 0.01808401939447191 1.5703273994891034
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r7 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r7
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(6)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r6 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.005150286560506423
+                      axis 1 -1 0
+                      anchor -0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10499999999999837 -0.10500000000000123 -0.025000000000000015
+                      rotation -0.708924432213903 -0.7052797445737289 0.0025751318822490954 1.5700066366308294
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r6 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r6
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(5)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r5 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.036169128366013936
+                      anchor 0 -0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation 5.551115123124572e-16 -0.15000000000000055 -0.025000000000000383
+                      rotation -0.018095021457764097 -0.9996727771946877 0.018080617641640918 1.5703272762871903
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r5 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r5
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(8)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r4 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3349832199693878e-05
+                      axis 1 1 0
+                      anchor 0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10499999999999987 -0.1050000000000001 -0.02500000000000069
+                      rotation 0.7071020575165109 -0.7071115047935244 6.674916101297688e-06 1.5700000000445478
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r4 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r4
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(4)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r3 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 9.667683692708975e-05
+                      axis 0 1 0
+                      anchor 0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.15000000000000058 -1.22124532708746e-15 -0.024999999999999925
+                      rotation 0.9999999976615351 4.837692690726514e-05 -4.833841838532911e-05 1.5700000023382332
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r3 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r3
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(3)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r2 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 0.9998844525944843
+                      anchor 0 0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation 8.881784197000473e-16 0.14999999999999875 -0.024999999999998773
+                      rotation -5.781972765692013e-05 0.9999999966595392 -5.777370261555011e-05 1.570000003340255
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r2 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r2
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(2)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r1 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -3.00015008489401
+                      axis 1 -1 0
+                      anchor 0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10500000000000113 0.10499999999999853 -0.02500000000000041
+                      rotation -0.46421188348619724 0.5349344977501309 -0.7059407980468422 3.041579545061837
+                      children [
+                        DEF r1 Shape {
+                          appearance Appearance {
+                          }
+                          geometry Cylinder {
+                            height 0.0585
+                            radius 0.025
+                          }
+                        }
+                      ]
+                      name "solid(1)"
+                      boundingObject USE r1
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF w1 Shape {
+                    appearance Appearance {
+                      material Material {
+                        diffuseColor 0.239216 0.219608 0.27451
+                      }
+                    }
+                    geometry Cylinder {
+                      height 0.05
+                      radius 0.15
+                    }
+                  }
+                ]
+                boundingObject USE w1
+                physics Physics {
+                }
+              }
+            ]
+            name "wheel1"
+            boundingObject Sphere {
+              radius 0.01
+            }
+            physics Physics {
+              density 10
+            }
+          }
+        }
+      ]
+      name "solid(2)"
+      boundingObject DEF plat Shape {
+        appearance Appearance {
+          material Material {
+            diffuseColor 0.964706 0.827451 0.176471
+          }
+        }
+        geometry Box {
+          size 1 1 0.1
+        }
+      }
+      physics Physics {
+        density 10
+      }
+    }
+    DEF w2 Solid {
+      rotation 0 0 1 3.14
+      children [
+        DEF wheel HingeJoint {
+          jointParameters HingeJointParameters {
+            position -0.00014596800613847347
+            axis 1 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor2"
+              maxVelocity 100
+            }
+          ]
+          endPoint Solid {
+            translation -0.00014312045164731877 -0.0005684648332579445 -0.0019479949216145767
+            rotation -0.17961300185609827 -0.9832837927101332 -0.029868922943704905 0.0005818883898658591
+            children [
+              DEF wheel Solid {
+                translation 0.5 0.5 0
+                rotation 0.7071067811865475 -0.7071067811865475 0 1.57
+                children [
+                  Pose {
+                    translation 0 0 0.05
+                    rotation 0 0 1 0.3925
+                    children [
+                      DEF r8 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.132522926445744e-05
+                          axis 1 1 0
+                          anchor -0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.10499999999999905 0.10499999999999833 -0.025000000000000924
+                          rotation -0.7070921585699642 0.7071214031988602 2.066261462382735e-05 1.5700000004269032
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r8 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r8
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(16)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r7 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004074920758752043
+                          axis 0 -1 0
+                          anchor -0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.14999999999999913 -5.551115123124925e-17 -0.02500000000000106
+                          rotation -0.9999958454612136 0.0020390778601441606 0.0020374547339940268 1.5700041545458752
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r7 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r7
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(15)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r6 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004935586141249838
+                          axis 1 -1 0
+                          anchor -0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.10499999999999943 -0.1049999999999992 -0.025000000000001063
+                          rotation -0.7088488477488284 -0.7053560952398643 0.0024677830394651667 1.5700060948415264
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r6 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r6
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(14)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r5 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -6.604209621003487e-05
+                          anchor 0 -0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation -4.440892098500004e-16 -0.14999999999999877 -0.02500000000000048
+                          rotation -3.304735409934633e-05 -0.9999999989087414 3.30210480799639e-05 1.5700000010910349
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r5 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r5
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(13)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r4 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.131253141179356e-05
+                          axis 1 1 0
+                          anchor 0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10499999999999923 -0.10499999999999848 -0.02500000000000024
+                          rotation 0.7071213987060817 -0.707092163063114 -2.065626569820768e-05 1.5700000004267682
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r4 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r4
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(12)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r3 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.00012446935940742102
+                          axis 0 1 0
+                          anchor 0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.14999999999999947 -2.2204460492500961e-16 -0.02500000000000007
+                          rotation 0.999999996123758 6.228425843765341e-05 -6.223467953634271e-05 1.5700000038758246
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r3 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r3
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(11)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r2 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.9999339705970811
+                          anchor 0 0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation 9.992007221623175e-16 0.15 -0.02500000000000086
+                          rotation -3.30410023715776e-05 0.9999999989091606 -3.301470142710823e-05 1.5700000010906645
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r2 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r2
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(10)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r1 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -3.000134721957497
+                          axis 1 -1 0
+                          anchor 0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.1050000000000003 0.10499999999999891 -0.025000000000001566
+                          rotation -0.4642079033192352 0.5349382055951684 -0.7059406056394412 3.0415686910997914
+                          children [
+                            DEF r1 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          name "solid(9)"
+                          boundingObject USE r1
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                    ]
+                  }
+                  DEF r8 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3342403909710754e-05
+                      axis 1 1 0
+                      anchor -0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.104999999999999 0.10499999999999961 -0.024999999999999932
+                      rotation -0.7071115021651714 0.707102060144934 -6.671201953714769e-06 1.5700000000442167
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r8 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r8
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(7)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r7 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.037100803817210704
+                      axis 0 -1 0
+                      anchor -0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.1499999999999981 -6.106226635437156e-16 -0.02500000000000001
+                      rotation -0.999655707205849 0.018560917211658534 0.018546142537892937 1.5703443520075149
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r7 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r7
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(6)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r6 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.005102647320436304
+                      axis 1 -1 0
+                      anchor -0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10499999999999902 -0.10499999999999961 -0.02500000000000138
+                      rotation -0.7089076624159631 -0.7052966871977187 0.002551312575571615 1.5700065144235678
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r6 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r6
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(5)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r5 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.03709619505817141
+                      anchor 0 -0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation 1.6653345369374479e-16 -0.14999999999999866 -0.02499999999999928
+                      rotation -0.018558612584399968 -0.999655792713896 0.018543839745157283 1.5703442664700429
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r5 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r5
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(8)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r4 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.335509928868106e-05
+                      axis 1 1 0
+                      anchor 0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.1049999999999988 -0.10499999999999902 -0.024999999999999148
+                      rotation 0.7071020556527893 -0.7071115066571961 6.677549651347463e-06 1.570000000044264
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r4 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r4
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(4)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r3 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 8.974168533753098e-05
+                      axis 0 1 0
+                      anchor 0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.14999999999999894 9.992007221623226e-16 -0.025000000000000633
+                      rotation 0.9999999979850028 4.490658870127508e-05 -4.4870842612156266e-05 1.5700000020147777
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r3 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r3
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(3)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r2 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 0.9998913803577917
+                      anchor 0 0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation 1.6653345369374654e-16 0.14999999999999977 -0.0249999999999988
+                      rotation -5.435308655024022e-05 0.9999999970480926 -5.4309820989958754e-05 1.5700000029517287
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r2 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r2
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(2)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r1 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -3.0001402820455736
+                      axis 1 -1 0
+                      anchor 0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10499999999999933 0.10500000000000011 -0.025000000000000144
+                      rotation -0.464209343806033 0.5349368636693935 -0.7059406752771261 3.041572619318848
+                      children [
+                        DEF r1 Shape {
+                          appearance Appearance {
+                          }
+                          geometry Cylinder {
+                            height 0.0585
+                            radius 0.025
+                          }
+                        }
+                      ]
+                      name "solid(1)"
+                      boundingObject USE r1
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF w1 Shape {
+                    appearance Appearance {
+                      material Material {
+                        diffuseColor 0.239216 0.219608 0.27451
+                      }
+                    }
+                    geometry Cylinder {
+                      height 0.05
+                      radius 0.15
+                    }
+                  }
+                ]
+                boundingObject USE w1
+                physics Physics {
+                }
+              }
+            ]
+            name "wheel2"
+            boundingObject Sphere {
+              radius 0.01
+            }
+            physics Physics {
+              density 10
+            }
+          }
+        }
+      ]
+      name "solid(3)"
+      boundingObject USE plat
+      physics Physics {
+        density 10
+      }
+    }
+    DEF w3 Solid {
+      rotation 0 0 1 -1.57
+      children [
+        DEF wheel HingeJoint {
+          jointParameters HingeJointParameters {
+            position -0.0001459693279798899
+            axis 1 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor3"
+              maxVelocity 100
+            }
+          ]
+          endPoint Solid {
+            translation -0.00014312044982785817 -0.0005684648350760935 -0.0019479949212145341
+            rotation -0.17961422339749522 -0.983283571214583 -0.02986886895767915 0.0005818896590432028
+            children [
+              DEF wheel Solid {
+                translation 0.5 0.5 0
+                rotation 0.7071067811865475 -0.7071067811865475 0 1.57
+                children [
+                  Pose {
+                    translation 0 0 0.05
+                    rotation 0 0 1 0.3925
+                    children [
+                      DEF r8 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.131600550690693e-05
+                          axis 1 1 0
+                          anchor -0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.1049999999999992 0.10499999999999785 -0.025000000000001132
+                          rotation -0.7070921618337853 0.7071213999353088 2.0658002752988197e-05 1.5700000004267236
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r8 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r8
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(16)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r7 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004075874295639714
+                          axis 0 -1 0
+                          anchor -0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.1499999999999994 -1.1934897514718252e-15 -0.025000000000002003
+                          rotation -0.9999958435166575 0.0020395550044376943 0.0020379314984722147 1.5700041564904341
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r7 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r7
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(15)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r6 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004935199369527163
+                          axis 1 -1 0
+                          anchor -0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.1049999999999995 -0.10499999999999943 -0.02500000000000178
+                          rotation -0.7088487115725202 -0.7053562327670098 0.0024675896559609566 1.570006093886407
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r6 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r6
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(14)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r5 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -6.601588105627795e-05
+                          anchor 0 -0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation -9.43689570931028e-16 -0.1499999999999989 -0.025000000000001556
+                          rotation -3.303423608859106e-05 -0.9999999989096077 3.3007940502250065e-05 1.5700000010901776
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r5 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r5
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(13)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r4 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.130989658711095e-05
+                          axis 1 1 0
+                          anchor 0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10499999999999961 -0.1049999999999995 -0.025000000000001934
+                          rotation 0.7071213977738234 -0.7070921639954493 -2.0654948286103104e-05 1.570000000426683
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r4 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r4
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(12)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r3 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.00012444131914429222
+                          axis 0 1 0
+                          anchor 0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.1499999999999988 -1.942890293093626e-16 -0.025000000000001115
+                          rotation 0.9999999961255042 6.227022713838743e-05 -6.222065940751807e-05 1.5700000038742845
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r3 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r3
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(11)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r2 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.999933990212465
+                          anchor 0 0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation 1.1102230246250388e-16 0.14999999999999744 -0.02500000000000163
+                          rotation -3.3031186863407434e-05 0.9999999989098087 -3.300489373349563e-05 1.5700000010900172
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r2 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r2
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(10)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r1 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -3.0001346803552726
+                          axis 1 -1 0
+                          anchor 0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10500000000000018 0.10499999999999826 -0.025000000000000282
+                          rotation -0.46420789254112543 0.534938215635877 -0.7059406051183278 3.0415686617076836
+                          children [
+                            DEF r1 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          name "solid(9)"
+                          boundingObject USE r1
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                    ]
+                  }
+                  DEF r8 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3336514710360348e-05
+                      axis 1 1 0
+                      anchor -0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10499999999999873 0.10499999999999882 -0.02500000000000119
+                      rotation -0.7071115000813797 0.7071020622287812 -6.668257354864461e-06 1.570000000044342
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r8 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r8
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(7)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r7 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.037109414537398244
+                      axis 0 -1 0
+                      anchor -0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.14999999999999838 -8.881784197000679e-16 -0.02500000000000168
+                      rotation -0.9996555474194747 0.018565223033540648 0.018550444932273487 1.5703445118487342
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r7 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r7
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(6)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r6 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.005103290440246155
+                      axis 1 -1 0
+                      anchor -0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10499999999999932 -0.10499999999999984 -0.025000000000000428
+                      rotation -0.708907888810099 -0.7052964584811613 0.002551634131289356 1.5700065160657513
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r6 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r6
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(5)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r5 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.03708793822278178
+                      anchor 0 -0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation -2.775557561562263e-16 -0.14999999999999888 -0.025000000000001396
+                      rotation -0.018554483721936663 -0.9996559458795478 0.01853971416929067 1.5703441132515237
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r5 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r5
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(8)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r4 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3342618470524314e-05
+                      axis 1 1 0
+                      anchor 0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10499999999999916 -0.10499999999999902 -0.025000000000001157
+                      rotation 0.7071020600690261 -0.7071115022410772 6.6713092341411794e-06 1.5700000000442866
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r4 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r4
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(4)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r3 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 8.972480879228073e-05
+                      axis 0 1 0
+                      anchor 0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.14999999999999936 9.436895709310758e-16 -0.02499999999999972
+                      rotation 0.9999999979857607 4.489814369837539e-05 -4.486240433163302e-05 1.5700000020139897
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r3 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r3
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(3)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r2 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 0.99989141020497
+                      anchor 0 0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation 7.216449660061494e-16 0.14999999999999852 -0.025000000000000244
+                      rotation -5.433815106812353e-05 0.9999999970497147 -5.42948973962923e-05 1.5700000029501116
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r2 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r2
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(2)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r1 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -3.0001402410919664
+                      axis 1 -1 0
+                      anchor 0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10499999999999977 0.10499999999999933 -0.025000000000000053
+                      rotation -0.46420933319595775 0.5349368735535662 -0.7059406747641761 3.041572590384961
+                      children [
+                        DEF r1 Shape {
+                          appearance Appearance {
+                          }
+                          geometry Cylinder {
+                            height 0.0585
+                            radius 0.025
+                          }
+                        }
+                      ]
+                      name "solid(1)"
+                      boundingObject USE r1
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF w1 Shape {
+                    appearance Appearance {
+                      material Material {
+                        diffuseColor 0.239216 0.219608 0.27451
+                      }
+                    }
+                    geometry Cylinder {
+                      height 0.05
+                      radius 0.15
+                    }
+                  }
+                ]
+                boundingObject USE w1
+                physics Physics {
+                }
+              }
+            ]
+            name "wheel3"
+            boundingObject Sphere {
+              radius 0.01
+            }
+            physics Physics {
+              density 10
+            }
+          }
+        }
+      ]
+      name "solid(4)"
+      boundingObject USE plat
+      physics Physics {
+        density 10
+      }
+    }
+    Solid {
+      children [
+        DEF plat Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 0.964706 0.827451 0.176471
+            }
+          }
+          geometry Box {
+            size 1 1 0.1
+          }
+        }
+      ]
+      boundingObject USE plat
+      physics Physics {
+        density 10
+      }
+    }
+    DEF w4 Solid {
+      children [
+        DEF wheel HingeJoint {
+          jointParameters HingeJointParameters {
+            position -0.0001457362211056578
+            axis 1 1 0
+          }
+          device [
+            RotationalMotor {
+              name "motor4"
+              maxVelocity 100
+            }
+          ]
+          endPoint Solid {
+            translation -0.00014312077091649462 -0.000568464513992506 -0.0019479949913290887
+            rotation -0.17939007868590534 -0.9833241878707437 -0.029878775366590383 0.0005816979124309505
+            children [
+              DEF wheel Solid {
+                translation 0.5 0.5 0
+                rotation 0.7071067811865475 -0.7071067811865475 0 1.57
+                children [
+                  Pose {
+                    translation 0 0 0.05
+                    rotation 0 0 1 0.3925
+                    children [
+                      DEF r8 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.5070306466463535e-05
+                          axis 1 1 0
+                          anchor -0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.10499999999999943 0.10499999999999965 -0.0249999999999997
+                          rotation -0.7070908333731747 0.7071227282811634 2.253515322535762e-05 1.570000000507908
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r8 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r8
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(16)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r7 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004093009206916243
+                          axis 0 -1 0
+                          anchor -0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.1499999999999999 1.1102230246249534e-16 -0.02500000000000021
+                          rotation -0.9999958084957394 0.002048129213690719 0.0020464988825644073 1.5700041915114802
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r7 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r7
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(15)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r6 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -0.004950124966764776
+                          axis 1 -1 0
+                          anchor -0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation -0.10500000000000043 -0.10499999999999929 -0.024999999999999904
+                          rotation -0.7088539666043876 -0.705350925529289 0.002475052363307834 1.5700061308016988
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r6 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r6
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(14)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r5 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -6.976393311485466e-05
+                          anchor 0 -0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation -5.551115123124568e-16 -0.1499999999999982 -0.02499999999999956
+                          rotation -3.4909755038612965e-05 -0.9999999987822787 3.4881966530521844e-05 1.5700000012172897
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r5 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r5
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(13)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r4 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 4.506424194703893e-05
+                          axis 1 1 0
+                          anchor 0.105 -0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10499999999999944 -0.10499999999999814 -0.024999999999999162
+                          rotation 0.7071227261354054 -0.7070908355191262 -2.253212096949667e-05 1.5700000005079036
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r4 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r4
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(12)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r3 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.00013349928859849873
+                          axis 0 1 0
+                          anchor 0.15 0 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.1499999999999997 6.383782391592946e-16 -0.024999999999999085
+                          rotation 0.9999999955409341 6.680281981285519e-05 -6.674964409980055e-05 1.5700000044588123
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r3 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r3
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(11)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r2 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position 0.9999302421370304
+                          anchor 0 0.15 -0.025
+                        }
+                        endPoint Solid {
+                          translation 4.996003610812214e-16 0.14999999999999944 -0.02499999999999978
+                          rotation -3.490671751907912e-05 0.9999999987824907 -3.487893144371465e-05 1.5700000012173083
+                          children [
+                            Solid {
+                              rotation 0 1 0 0
+                              children [
+                                DEF r2 Shape {
+                                  appearance Appearance {
+                                  }
+                                  geometry Cylinder {
+                                    height 0.0585
+                                    radius 0.025
+                                  }
+                                }
+                              ]
+                              boundingObject USE r2
+                              physics Physics {
+                              }
+                            }
+                          ]
+                          name "solid(10)"
+                          boundingObject Sphere {
+                            radius 0.02
+                          }
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                      DEF r1 HingeJoint {
+                        jointParameters HingeJointParameters {
+                          position -3.0001437358471215
+                          axis 1 -1 0
+                          anchor 0.105 0.105 -0.025
+                        }
+                        endPoint Solid {
+                          translation 0.10500000000000022 0.10500000000000016 -0.02499999999999954
+                          rotation -0.4642102386029599 0.5349360300944148 -0.7059407185330865 3.0415750594402517
+                          children [
+                            DEF r1 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          name "solid(9)"
+                          boundingObject USE r1
+                          physics Physics {
+                            density 10
+                          }
+                        }
+                      }
+                    ]
+                  }
+                  DEF r8 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3331195388488482e-05
+                      axis 1 1 0
+                      anchor -0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10500000000000012 0.10499999999999954 -0.025000000000000105
+                      rotation -0.707111498199252 0.7071020641109591 -6.665597690119773e-06 1.5700000000442527
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r8 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r8
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(7)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r7 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.03618453343144701
+                      axis 0 -1 0
+                      anchor -0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.1500000000000001 2.2204460492499877e-16 -0.024999999999999883
+                      rotation -0.9996724984716034 0.01810272507883719 0.01808831513054989 1.5703275551015055
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r7 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r7
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(6)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r6 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.005150928635183405
+                      axis 1 -1 0
+                      anchor -0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation -0.10500000000000034 -0.10499999999999968 -0.025000000000000605
+                      rotation -0.7089246582292807 -0.7052795162180585 0.0025754529153192715 1.5700066382856592
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r6 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r6
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(5)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r5 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -0.03616088457797595
+                      anchor 0 -0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation -9.992007221623983e-16 -0.14999999999999888 -0.025000000000000553
+                      rotation -0.018090898979578794 -0.9996729263004375 0.018076498444968774 1.5703271271325012
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r5 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r5
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(8)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r4 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -1.3337259837875592e-05
+                      axis 1 1 0
+                      anchor 0.105 -0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10499999999999875 -0.10499999999999877 -0.02500000000000006
+                      rotation 0.7071020619651279 -0.707111500345026 6.6686299216456835e-06 1.570000000044266
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r4 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r4
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(4)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r3 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 9.666008015683236e-05
+                      axis 0 1 0
+                      anchor 0.15 0 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.14999999999999894 1.4988010832439239e-15 -0.025000000000000227
+                      rotation 0.9999999976623457 4.836854184408824e-05 -4.83300400084859e-05 1.5700000023370582
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r3 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r3
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(3)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r2 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position 0.9998844824840729
+                      anchor 0 0.15 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0 0.1499999999999995 -0.024999999999999814
+                      rotation -5.780477097051177e-05 0.999999996661267 -5.775875782206853e-05 1.5700000033385435
+                      children [
+                        Solid {
+                          rotation 0 1 0 0
+                          children [
+                            DEF r2 Shape {
+                              appearance Appearance {
+                              }
+                              geometry Cylinder {
+                                height 0.0585
+                                radius 0.025
+                              }
+                            }
+                          ]
+                          boundingObject USE r2
+                          physics Physics {
+                          }
+                        }
+                      ]
+                      name "solid(2)"
+                      boundingObject Sphere {
+                        radius 0.02
+                      }
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF r1 HingeJoint {
+                    jointParameters HingeJointParameters {
+                      position -3.0001500440044886
+                      axis 1 -1 0
+                      anchor 0.105 0.105 -0.025
+                    }
+                    endPoint Solid {
+                      translation 0.10499999999999919 0.10500000000000019 -0.02499999999999959
+                      rotation -0.46421187289275984 0.5349345076188675 -0.7059407975347197 3.041579516173242
+                      children [
+                        DEF r1 Shape {
+                          appearance Appearance {
+                          }
+                          geometry Cylinder {
+                            height 0.0585
+                            radius 0.025
+                          }
+                        }
+                      ]
+                      name "solid(1)"
+                      boundingObject USE r1
+                      physics Physics {
+                        density 10
+                      }
+                    }
+                  }
+                  DEF w1 Shape {
+                    appearance Appearance {
+                      material Material {
+                        diffuseColor 0.239216 0.219608 0.27451
+                      }
+                    }
+                    geometry Cylinder {
+                      height 0.05
+                      radius 0.15
+                    }
+                  }
+                ]
+                boundingObject USE w1
+                physics Physics {
+                }
+              }
+            ]
+            name "wheel4"
+            boundingObject Sphere {
+              radius 0.01
+            }
+            physics Physics {
+              density 10
+            }
+          }
+        }
+      ]
+      name "solid(1)"
+      boundingObject USE plat
+      physics Physics {
+        density 10
+      }
+    }
+  ]
+  name "tracker"
+  physics Physics {
+    density 10
+  }
+  controller "<extern>"
+  controllerArgs [
+    ""
+  ]
+  supervisor TRUE
+}
