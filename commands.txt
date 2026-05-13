@@ -1,0 +1,51 @@
+## 环境准备
+# 1. 确保 Webots 已打开，加载 world/world_test.wbt
+# 2. 确保仿真未运行（点击 Webots 暂停/停止）
+# 3. conda env:rospy
+
+## 一键启动（三选一）
+ros2 launch mecanum_patrol demo.launch.py            # 全开：底盘+位姿+决策+keyboard+mission
+ros2 launch mecanum_patrol keyboard_demo.launch.py   # 手动控制：底盘+位姿+决策+keyboard
+ros2 launch mecanum_patrol mission_demo.launch.py    # 自动巡逻：底盘+位姿+决策+mission
+
+## -------------------------------------------------------
+## 逐个手动启动（必须按此顺序）：
+## -------------------------------------------------------
+
+# 终端1 — mecanum_driver（底盘）
+ros2 run mecanum_patrol mecanum_driver --ros-args --params-file /home/tb/robot_ws/src/mecanum_patrol/config/mecanum_driver.yaml
+
+# 终端2 — perception（位姿）
+ros2 run mecanum_patrol perception
+
+# 终端3 — decision（决策）
+ros2 run mecanum_patrol decision --ros-args --params-file /home/tb/robot_ws/src/mecanum_patrol/config/mecanum_driver.yaml
+
+# 终端4 — 上层（按需选一个）
+ros2 run mecanum_patrol keyboard_app --ros-args --params-file /home/tb/robot_ws/src/mecanum_patrol/config/mecanum_driver.yaml
+ros2 run mecanum_patrol mission --ros-args --params-file /home/tb/robot_ws/src/mecanum_patrol/config/mecanum_driver.yaml
+
+## -------------------------------------------------------
+## 调试用命令：
+## -------------------------------------------------------
+
+# 查看所有节点
+ros2 node list
+
+# 查看所有 topic
+ros2 topic list
+
+# 查看 /cmd_vel 实时数据
+ros2 topic echo /cmd_vel
+
+# 查看 /tracker_pose 实时数据
+ros2 topic echo /tracker_pose
+
+# 手动发送目标指令（x,y 坐标）
+ros2 topic pub --once /target_command std_msgs/msg/String "data: '14.0,0.0'"
+
+# 查看 Action 服务
+ros2 action list
+
+# 查看节点图
+rqt_graph

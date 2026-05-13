@@ -1,0 +1,6 @@
+---
+float32 pose_x
+float32 pose_y
+float32 cmd_vx
+float32 cmd_vy
+string target_name

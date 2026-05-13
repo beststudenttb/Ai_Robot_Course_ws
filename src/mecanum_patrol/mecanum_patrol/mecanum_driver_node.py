@@ -1,25 +1,18 @@
-"""ROS2 node that owns all low-level mecanum chassis commands."""
+"""Mecanum chassis driver: /cmd_vel -> inverse kinematics -> motor velocities."""
 
 from __future__ import annotations
 
 import os
 import sys
 from dataclasses import dataclass
-from typing import Optional
 
 import rclpy
 from geometry_msgs.msg import Twist
 from rclpy.node import Node
+from std_msgs.msg import String
 
-webots_home = os.environ.get("WEBOTS_HOME", "/usr/local/webots")
-webots_controller_python = os.path.join(webots_home, "lib", "controller", "python")
-if webots_controller_python not in sys.path:
-    sys.path.insert(0, webots_controller_python)
-
-try:
-    from controller import Robot
-except ImportError:  # Allows ROS-only testing without Webots' Python runtime.
-    Robot = None
+sys.path.insert(0, os.path.join(os.environ["WEBOTS_HOME"], "lib", "controller", "python"))
+from controller import Robot  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -31,7 +24,6 @@ class WheelSpeeds:
 
 
 class MecanumDriverNode(Node):
-    """Subscribe to /cmd_vel and convert chassis velocity to wheel speeds."""
 
     def __init__(self) -> None:
         super().__init__("mecanum_driver")
@@ -39,113 +31,80 @@ class MecanumDriverNode(Node):
         self.declare_parameter("wheel_radius", 0.05)
         self.declare_parameter("half_length", 0.15)
         self.declare_parameter("half_width", 0.12)
-        self.declare_parameter("cmd_vel_topic", "/cmd_vel")
-        self.declare_parameter("tracker_state_topic", "/tracker_state")
         self.declare_parameter("heading_gain", 0.8)
-        self.declare_parameter("motor1_name", "motor1")
-        self.declare_parameter("motor2_name", "motor2")
-        self.declare_parameter("motor3_name", "motor3")
-        self.declare_parameter("motor4_name", "motor4")
 
-        self.wheel_radius = self.get_parameter("wheel_radius").value
-        self.half_length = self.get_parameter("half_length").value
-        self.half_width = self.get_parameter("half_width").value
+        self.r = self.get_parameter("wheel_radius").value
+        self.hl = self.get_parameter("half_length").value
+        self.hw = self.get_parameter("half_width").value
         self.heading_gain = float(self.get_parameter("heading_gain").value)
         self.heading_error = 0.0
+        self.paused = False
+        self.last_speeds = WheelSpeeds(0.0, 0.0, 0.0, 0.0)
 
-        topic = self.get_parameter("cmd_vel_topic").value
-        self.subscription = self.create_subscription(Twist, topic, self.on_cmd_vel, 10)
-        state_topic = self.get_parameter("tracker_state_topic").value
-        self.state_subscription = self.create_subscription(
-            Twist, state_topic, self.on_tracker_state, 10
-        )
-        self.robot: Optional[Robot] = None
-        self.motors = {}
-        self._connect_webots_motors()
+        self.create_subscription(Twist, "/cmd_vel", self.on_cmd_vel, 10)
+        self.create_subscription(Twist, "/tracker_state", self.on_tracker_state, 10)
+        self.create_subscription(String, "/pause", self.on_pause, 10)
+        self.create_timer(0.3, self.on_timer)
 
-        self.get_logger().info(f"mecanum driver listening on {topic}")
+        self.robot = Robot()
+        self.timestep = int(self.robot.getBasicTimeStep())
+        self.m1 = self.robot.getDevice("motor1")
+        self.m2 = self.robot.getDevice("motor2")
+        self.m3 = self.robot.getDevice("motor3")
+        self.m4 = self.robot.getDevice("motor4")
+        for m in (self.m1, self.m2, self.m3, self.m4):
+            m.setPosition(float("inf"))
+            m.setVelocity(0.0)
+
+        self.get_logger().info("mecanum driver ready")
 
     def on_tracker_state(self, msg: Twist) -> None:
         self.heading_error = msg.angular.z
 
-    def _connect_webots_motors(self) -> None:
-        if Robot is None:
-            self.get_logger().warn(
-                "Webots controller module not found; running without motor output."
-            )
-            return
+    def on_pause(self, msg: String) -> None:
+        self.paused = not self.paused
+        if self.paused:
+            for m in (self.m1, self.m2, self.m3, self.m4):
+                m.setVelocity(0.0)
+        self.get_logger().info(f"pause = {self.paused}")
 
-        self.robot = Robot()
-        self.timestep = int(self.robot.getBasicTimeStep())
-        motor_params = {
-            "motor1": "motor1_name",
-            "motor2": "motor2_name",
-            "motor3": "motor3_name",
-            "motor4": "motor4_name",
-        }
-
-        for logical_name, parameter_name in motor_params.items():
-            device_name = self.get_parameter(parameter_name).value
-            motor = self.robot.getDevice(device_name)
-            if motor is None:
-                self.get_logger().error(f"Webots motor '{device_name}' was not found")
-                continue
-            motor.setPosition(float("inf"))
-            motor.setVelocity(0.0)
-            self.motors[logical_name] = motor
+    def on_timer(self) -> None:
+        if self.paused:
+            self.get_logger().info("paused")
+        else:
+            s = self.last_speeds
+            self.get_logger().info(
+                f"m1={s.motor1:.3f} m2={s.motor2:.3f} m3={s.motor3:.3f} m4={s.motor4:.3f}")
 
     def on_cmd_vel(self, msg: Twist) -> None:
-        corrected_omega = msg.angular.z - self.heading_gain * self.heading_error
-        speeds = self.inverse_kinematics(
-            vx=msg.linear.x,
-            vy=msg.linear.y,
-            omega=corrected_omega,
-        )
-        self.set_wheel_speeds(speeds)
+        if self.paused:
+            return
+        omega = msg.angular.z - self.heading_gain * self.heading_error
+        speeds = self.inverse_kinematics(msg.linear.x, msg.linear.y, omega)
+        self.last_speeds = speeds
+        self.write_motors(speeds)
 
     def inverse_kinematics(self, vx: float, vy: float, omega: float) -> WheelSpeeds:
-        radius = float(self.wheel_radius)
-        chassis_radius = float(self.half_length) + float(self.half_width)
+        L = float(self.hl) + float(self.hw)
+        r = float(self.r)
         return WheelSpeeds(
-            motor1=(vx + vy - chassis_radius * omega) / radius,
-            motor2=(-vx + vy - chassis_radius * omega) / radius,
-            motor3=(-vx - vy - chassis_radius * omega) / radius,
-            motor4=(vx - vy - chassis_radius * omega) / radius,
+            motor1=( vx + vy - L * omega) / r,
+            motor2=(-vx + vy - L * omega) / r,
+            motor3=(-vx - vy - L * omega) / r,
+            motor4=( vx - vy - L * omega) / r,
         )
 
-    def set_wheel_speeds(self, speeds: WheelSpeeds) -> None:
-        self.get_logger().info(
-            "motor speeds m1=%.3f m2=%.3f m3=%.3f m4=%.3f"
-            % (
-                speeds.motor1,
-                speeds.motor2,
-                speeds.motor3,
-                speeds.motor4,
-            )
-        )
-
-        if not self.motors:
-            return
-
-        self.motors["motor1"].setVelocity(speeds.motor1)
-        self.motors["motor2"].setVelocity(speeds.motor2)
-        self.motors["motor3"].setVelocity(speeds.motor3)
-        self.motors["motor4"].setVelocity(speeds.motor4)
+    def write_motors(self, s: WheelSpeeds) -> None:
+        self.m1.setVelocity(s.motor1)
+        self.m2.setVelocity(s.motor2)
+        self.m3.setVelocity(s.motor3)
+        self.m4.setVelocity(s.motor4)
 
 
-def main(args: Optional[list[str]] = None) -> None:
-    rclpy.init(args=args)
+def main():
+    rclpy.init()
     node = MecanumDriverNode()
-    try:
-        if node.robot is None:
-            rclpy.spin(node)
-        else:
-            while rclpy.ok() and node.robot.step(node.timestep) != -1:
-                rclpy.spin_once(node, timeout_sec=0.0)
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
-
-
-if __name__ == "__main__":
-    main()
+    while rclpy.ok() and node.robot.step(node.timestep) != -1:
+        rclpy.spin_once(node, timeout_sec=0.0)
+    node.destroy_node()
+    rclpy.shutdown()

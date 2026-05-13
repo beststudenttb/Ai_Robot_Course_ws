@@ -1,74 +1,66 @@
-"""Keyboard command client: publish A/B/C target choices."""
+"""Keyboard: A/B/C -> /target_command, r -> /reset, p -> /pause."""
 
 from __future__ import annotations
 
 import select
 import termios
 import tty
-from typing import Optional, TextIO
 
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 
-
 HELP = """
-Target command:
-  A -> A_point
-  B -> B_point
-  C -> C_point
-  Ctrl-C: quit
+  A/B/C -> named target
+  r     -> reset to origin
+  p     -> toggle pause
+  Ctrl-C -> quit
 """
 
 
 class KeyboardAppNode(Node):
+
     def __init__(self) -> None:
         super().__init__("keyboard_app")
-        self.declare_parameter("target_command_topic", "/target_command")
-
-        topic = self.get_parameter("target_command_topic").value
-        self.publisher = self.create_publisher(String, topic, 10)
-
-        self.get_logger().info(f"keyboard target client publishing to {topic}")
+        self.pub = self.create_publisher(String, "/target_command", 10)
+        self.reset_pub = self.create_publisher(String, "/reset", 10)
+        self.pause_pub = self.create_publisher(String, "/pause", 10)
+        self.get_logger().info("keyboard ready")
         print(HELP)
 
-    def publish_key(self, key: str) -> None:
+    def publish(self, key: str) -> None:
         key = key.upper()
-        if key not in {"A", "B", "C"}:
-            return
         msg = String()
-        msg.data = f"{key}_point"
-        self.publisher.publish(msg)
-        self.get_logger().info(f"sent target {msg.data}")
+        if key == "R":
+            self.reset_pub.publish(msg)
+            self.get_logger().info("reset")
+        elif key == "P":
+            self.pause_pub.publish(msg)
+            self.get_logger().info("pause")
+        elif key in ("A", "B", "C"):
+            msg.data = f"{key}_point"
+            self.pub.publish(msg)
+            self.get_logger().info(f"target {msg.data}")
 
 
-def read_key(input_stream: TextIO, timeout: float = 0.1) -> str:
-    ready, _, _ = select.select([input_stream], [], [], timeout)
-    if not ready:
-        return ""
-    return input_stream.read(1)
-
-
-def main(args: Optional[list[str]] = None) -> None:
-    rclpy.init(args=args)
+def main():
+    rclpy.init()
     node = KeyboardAppNode()
 
-    input_stream = open("/dev/tty", "r", encoding="utf-8")
-    old_settings = termios.tcgetattr(input_stream)
-    try:
-        tty.setcbreak(input_stream.fileno())
-        while rclpy.ok():
-            key = read_key(input_stream)
+    f = open("/dev/tty")
+    old = termios.tcgetattr(f)
+    tty.setcbreak(f.fileno())
+
+    while rclpy.ok():
+        ready, _, _ = select.select([f], [], [], 0.1)
+        if ready:
+            key = f.read(1)
             if key == "\x03":
                 break
-            node.publish_key(key)
-            rclpy.spin_once(node, timeout_sec=0.0)
-    finally:
-        termios.tcsetattr(input_stream, termios.TCSADRAIN, old_settings)
-        input_stream.close()
-        node.destroy_node()
-        rclpy.shutdown()
+            node.publish(key)
+        rclpy.spin_once(node, timeout_sec=0.0)
 
-
-if __name__ == "__main__":
-    main()
+    termios.tcsetattr(f, termios.TCSADRAIN, old)
+    f.close()
+    node.destroy_node()
+    rclpy.shutdown()

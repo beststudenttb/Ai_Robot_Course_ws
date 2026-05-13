@@ -1,120 +1,78 @@
-"""Default mission layer: send A/B/C navigation goals through the action API."""
+"""Mission layer: sequence patrol + keyboard override via action."""
 
 from __future__ import annotations
-
-import time
-from dataclasses import dataclass
-from typing import Optional
 
 import rclpy
 from mecanum_patrol_interfaces.action import NavigateTo
 from rclpy.action import ActionClient
 from rclpy.node import Node
-
-
-@dataclass
-class Target:
-    name: str
-    x: float
-    y: float
+from std_msgs.msg import String
 
 
 class MissionNode(Node):
+
     def __init__(self) -> None:
         super().__init__("mission")
-        self.declare_parameter("action_name", "/navigate_to")
+
         self.declare_parameter("target_sequence", ["A_point", "B_point", "C_point"])
-        self.declare_parameter("A_point_x", 14.0)
-        self.declare_parameter("A_point_y", 0.0)
-        self.declare_parameter("B_point_x", 14.0)
-        self.declare_parameter("B_point_y", 14.0)
-        self.declare_parameter("C_point_x", 0.0)
-        self.declare_parameter("C_point_y", 14.0)
-        self.declare_parameter("retry_delay", 1.0)
+        self.sequence = self.get_parameter("target_sequence").value
 
-        action_name = self.get_parameter("action_name").value
-        self.retry_delay = float(self.get_parameter("retry_delay").value)
-        self.targets = {
-            "A_point": self.target_from_parameters("A_point"),
-            "B_point": self.target_from_parameters("B_point"),
-            "C_point": self.target_from_parameters("C_point"),
-        }
-        self.sequence = [
-            self.targets[name]
-            for name in self.get_parameter("target_sequence").value
-            if name in self.targets
-        ]
-        self.action_client = ActionClient(self, NavigateTo, action_name)
-        self.get_logger().info(
-            "mission initialized sequence=%s"
-            % ",".join(target.name for target in self.sequence)
-        )
+        self.client = ActionClient(self, NavigateTo, "/navigate_to")
+        self.create_subscription(String, "/target_command", self.on_keyboard, 10)
 
-    def target_from_parameters(self, name: str) -> Target:
-        return Target(
-            name=name,
-            x=float(self.get_parameter(f"{name}_x").value),
-            y=float(self.get_parameter(f"{name}_y").value),
-        )
+        self.keyboard_name = None
+        self.idx = 0
+        self.get_logger().info(f"mission init sequence={self.sequence}")
+
+    def on_keyboard(self, msg: String) -> None:
+        self.keyboard_name = msg.data.strip()
+        self.get_logger().info(f"keyboard: {self.keyboard_name}")
 
     def run(self) -> None:
-        if not self.sequence:
-            self.get_logger().error("mission has no valid targets")
-            return
-
-        index = 0
         while rclpy.ok():
-            target = self.sequence[index]
-            if self.send_goal_and_wait(target):
-                index = (index + 1) % len(self.sequence)
+            if self.keyboard_name is not None:
+                name = self.keyboard_name
+                self.keyboard_name = None
+                from_keyboard = True
             else:
-                time.sleep(self.retry_delay)
+                name = self.sequence[self.idx]
+                from_keyboard = False
 
-    def send_goal_and_wait(self, target: Target) -> bool:
-        if not self.action_client.wait_for_server(timeout_sec=1.0):
-            self.get_logger().warn("waiting for decision action server")
-            return False
+            self.client.wait_for_server(timeout_sec=1.0)
+            goal = NavigateTo.Goal()
+            goal.target_name = name
+            self.get_logger().info(f"send action: {name}")
 
-        goal = NavigateTo.Goal()
-        goal.target_name = target.name
-        goal.target_x = float(target.x)
-        goal.target_y = float(target.y)
+            send_future = self.client.send_goal_async(goal)
+            rclpy.spin_until_future_complete(self, send_future)
+            handle = send_future.result()
+            if handle is None or not handle.accepted:
+                self.get_logger().warn("action rejected")
+                continue
 
-        self.get_logger().info(
-            "send action target=%s (%.3f, %.3f)" % (target.name, target.x, target.y)
-        )
-        send_future = self.action_client.send_goal_async(goal)
-        rclpy.spin_until_future_complete(self, send_future)
-        goal_handle = send_future.result()
-        if goal_handle is None or not goal_handle.accepted:
-            self.get_logger().warn("action target=%s rejected" % target.name)
-            return False
+            result_future = handle.get_result_async()
+            while rclpy.ok():
+                rclpy.spin_once(self, timeout_sec=0.1)
+                if result_future.done():
+                    break
+                if self.keyboard_name is not None:
+                    break
 
-        result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future)
-        result = result_future.result()
-        if result is None:
-            self.get_logger().warn("action target=%s returned no result" % target.name)
-            return False
-        if not result.result.success:
-            self.get_logger().warn(
-                "action target=%s failed: %s" % (target.name, result.result.message)
-            )
-            return False
+            if self.keyboard_name is not None:
+                continue
 
-        self.get_logger().info("action target=%s arrived" % target.name)
-        return True
+            result = result_future.result()
+            if result is not None and result.result.success:
+                self.get_logger().info("action arrived")
+                if not from_keyboard:
+                    self.idx = (self.idx + 1) % len(self.sequence)
+            else:
+                self.get_logger().warn("action failed")
 
 
-def main(args: Optional[list[str]] = None) -> None:
-    rclpy.init(args=args)
+def main():
+    rclpy.init()
     node = MissionNode()
-    try:
-        node.run()
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
-
-
-if __name__ == "__main__":
-    main()
+    node.run()
+    node.destroy_node()
+    rclpy.shutdown()

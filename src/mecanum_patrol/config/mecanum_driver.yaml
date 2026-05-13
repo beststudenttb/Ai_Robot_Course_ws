@@ -13,11 +13,7 @@ mecanum_driver:
 
 decision:
   ros__parameters:
-    pose_topic: /tracker_pose
-    cmd_vel_topic: /cmd_vel
-    marker_state_topic: /target_marker_state
-    target_command_topic: /target_command
-    target_name: A_point
+    default_target: A_point
     A_point_x: 14.0
     A_point_y: 0.0
     B_point_x: 14.0
@@ -25,19 +21,11 @@ decision:
     C_point_x: 0.0
     C_point_y: 14.0
     slow_speed: 0.25
-
-    slowdown_distance: 5.0
-    yellow_distance: 7.0
+    slowdown_distance: 3.0
+    yellow_distance: 3.0
     stop_distance: 0.05
 
 mission:
   ros__parameters:
-    action_name: /navigate_to
     target_sequence: [A_point, B_point, C_point]
-    A_point_x: 14.0
-    A_point_y: 0.0
-    B_point_x: 14.0
-    B_point_y: 14.0
-    C_point_x: 0.0
-    C_point_y: 14.0
     retry_delay: 1.0

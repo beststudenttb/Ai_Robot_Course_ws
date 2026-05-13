@@ -1,161 +1,138 @@
-"""Perception layer running as the Webots extern controller named `super`."""
-
-from __future__ import annotations
+"""Perception layer: Webots Supervisor, publish pose + tf, marker color, reset."""
 
 import math
 import os
 import sys
-from typing import Optional
 
 import rclpy
 from geometry_msgs.msg import PoseStamped, TransformStamped, Twist
+from mecanum_patrol_interfaces.srv import GetPose
 from rclpy.node import Node
 from std_msgs.msg import String
 from tf2_ros import TransformBroadcaster
 
-webots_home = os.environ.get("WEBOTS_HOME", "/usr/local/webots")
-webots_controller_python = os.path.join(webots_home, "lib", "controller", "python")
-if webots_controller_python not in sys.path:
-    sys.path.insert(0, webots_controller_python)
+sys.path.insert(0, os.path.join(os.environ["WEBOTS_HOME"], "lib", "controller", "python"))
+from controller import Supervisor  # noqa: E402
 
-from controller import Supervisor
-
-
-def quaternion_from_yaw(yaw: float) -> tuple[float, float, float, float]:
-    half_yaw = yaw * 0.5
-    return 0.0, 0.0, math.sin(half_yaw), math.cos(half_yaw)
-
-
-def yaw_from_webots_orientation(orientation: list[float]) -> float:
-    return math.atan2(orientation[3], orientation[0])
+COLORS = {
+    "white": [1.0, 1.0, 1.0],
+    "green": [0.0, 1.0, 0.0],
+    "yellow": [1.0, 1.0, 0.0],
+    "red": [1.0, 0.0, 0.0],
+}
 
 
 class PerceptionNode(Node):
+
     def __init__(self) -> None:
         super().__init__("perception")
-        self.declare_parameter("pose_topic", "/tracker_pose")
-        self.declare_parameter("state_topic", "/tracker_state")
-        self.declare_parameter("world_frame", "world")
-        self.declare_parameter("tracker_frame", "tracker")
-        self.declare_parameter("marker_state_topic", "/target_marker_state")
-        self.declare_parameter("log_period_sec", 1.0)
 
-        self.pose_topic = self.get_parameter("pose_topic").value
-        self.state_topic = self.get_parameter("state_topic").value
-        self.world_frame = self.get_parameter("world_frame").value
-        self.tracker_frame = self.get_parameter("tracker_frame").value
-        self.log_period_sec = float(self.get_parameter("log_period_sec").value)
+        self.init_x = 0.0
+        self.init_y = 0.0
+        self.init_yaw = 0.0
 
-        self.publisher = self.create_publisher(PoseStamped, self.pose_topic, 10)
-        self.state_publisher = self.create_publisher(Twist, self.state_topic, 10)
-        self.tf_broadcaster = TransformBroadcaster(self)
-        marker_state_topic = self.get_parameter("marker_state_topic").value
-        self.marker_subscription = self.create_subscription(
-            String, marker_state_topic, self.on_marker_state, 10
-        )
-        self.supervisor = None
-        self.self_node = None
-        self.timestep = 32
-        self.last_log_time = 0.0
-        self._connect_webots()
-        self.get_logger().info("perception initialized")
+        self.pub = self.create_publisher(PoseStamped, "/tracker_pose", 10)
+        self.state_pub = self.create_publisher(Twist, "/tracker_state", 10)
+        self.tf = TransformBroadcaster(self)
+        self.create_subscription(String, "/target_marker_state", self.on_marker, 10)
+        self.create_subscription(String, "/reset", self.on_reset, 10)
+        self.create_service(GetPose, "/get_pose", self.on_get_pose)
 
-    def _connect_webots(self) -> None:
-        if Supervisor is None:
-            self.get_logger().error("Webots Supervisor module not found")
-            return
         self.supervisor = Supervisor()
         self.timestep = int(self.supervisor.getBasicTimeStep())
-        self.self_node = self.supervisor.getSelf()
+        self.tracker = self.supervisor.getFromDef("tracker")
+        self.x = 0.0
+        self.y = 0.0
+        self.yaw = 0.0
+        self.create_timer(0.5, self.on_log)
+        self.get_logger().info("perception ready")
 
-    def on_marker_state(self, msg: String) -> None:
-        if self.supervisor is None or ":" not in msg.data:
+    def on_marker(self, msg: String) -> None:
+        if ":" not in msg.data:
             return
-        target_name, color_name = msg.data.split(":", 1)
-        colors = {
-            "white": [1.0, 1.0, 1.0],
-            "green": [0.0, 1.0, 0.0],
-            "yellow": [1.0, 1.0, 0.0],
-            "red": [1.0, 0.0, 0.0],
-        }
-        color = colors.get(color_name)
+        name, c = msg.data.split(":", 1)
+        color = COLORS.get(c)
         if color is None:
             return
+        for p in ("A_point", "B_point", "C_point"):
+            self.set_color(p, COLORS["white"])
+        self.set_color(name, color)
 
-        for point_name in ("A_point", "B_point", "C_point"):
-            self.set_appearance_color(point_name, [1.0, 1.0, 1.0])
-        self.set_appearance_color(target_name, color)
+    def on_reset(self, msg: String) -> None:
+        self.tracker.getField("translation").setSFVec3f([self.init_x, self.init_y, 0.0])
+        self.tracker.getField("rotation").setSFRotation([0.0, 0.0, 1.0, self.init_yaw])
+        for p in ("A_point", "B_point", "C_point"):
+            self.set_color(p, COLORS["white"])
+        self.get_logger().info("reset")
 
-    def set_appearance_color(self, target_name: str, color: list[float]) -> None:
-        appearance = self.supervisor.getFromDef(target_name)
-        if appearance is None:
-            self.get_logger().warn(f"target appearance '{target_name}' not found")
+    def set_color(self, name: str, color: list[float]) -> None:
+        node = self.supervisor.getFromDef(name)
+        if node is None:
             return
-        material = appearance.getField("material").getSFNode()
-        material.getField("diffuseColor").setSFColor(color)
+        mat = node.getField("material").getSFNode()
+        mat.getField("diffuseColor").setSFColor(color)
 
     def step(self) -> bool:
-        if self.supervisor is None or self.self_node is None:
-            return False
         return self.supervisor.step(self.timestep) != -1
 
-    def publish_pose(self) -> None:
-        position = self.self_node.getPosition()
-        yaw = yaw_from_webots_orientation(self.self_node.getOrientation())
-        qx, qy, qz, qw = quaternion_from_yaw(yaw)
-        stamp = self.get_clock().now().to_msg()
+    def on_get_pose(self, request, response):
+        response.x = float(self.x)
+        response.y = float(self.y)
+        response.yaw = float(self.yaw)
+        return response
+
+    def on_log(self) -> None:
+        self.get_logger().info(
+            f"pose x={self.x:.3f} y={self.y:.3f} yaw={self.yaw:.3f}")
+
+    def publish(self) -> None:
+        pos = self.tracker.getPosition()
+        ori = self.tracker.getOrientation()
+        yaw = math.atan2(ori[3], ori[0])
+        self.x = pos[0]
+        self.y = pos[1]
+        self.yaw = yaw
+        h = yaw * 0.5
+        qx, qy, qz, qw = 0.0, 0.0, math.sin(h), math.cos(h)
+        now = self.get_clock().now().to_msg()
 
         pose = PoseStamped()
-        pose.header.stamp = stamp
-        pose.header.frame_id = self.world_frame
-        pose.pose.position.x = position[0]
-        pose.pose.position.y = position[1]
+        pose.header.stamp = now
+        pose.header.frame_id = "world"
+        pose.pose.position.x = pos[0]
+        pose.pose.position.y = pos[1]
         pose.pose.position.z = 0.0
         pose.pose.orientation.x = qx
         pose.pose.orientation.y = qy
         pose.pose.orientation.z = qz
         pose.pose.orientation.w = qw
-        self.publisher.publish(pose)
+        self.pub.publish(pose)
 
         state = Twist()
-        state.linear.x = position[0]
-        state.linear.y = position[1]
+        state.linear.x = pos[0]
+        state.linear.y = pos[1]
         state.angular.z = yaw
-        self.state_publisher.publish(state)
+        self.state_pub.publish(state)
 
-        transform = TransformStamped()
-        transform.header.stamp = stamp
-        transform.header.frame_id = self.world_frame
-        transform.child_frame_id = self.tracker_frame
-        transform.transform.translation.x = position[0]
-        transform.transform.translation.y = position[1]
-        transform.transform.translation.z = 0.0
-        transform.transform.rotation.x = qx
-        transform.transform.rotation.y = qy
-        transform.transform.rotation.z = qz
-        transform.transform.rotation.w = qw
-        self.tf_broadcaster.sendTransform(transform)
-
-        now = self.get_clock().now().nanoseconds * 1e-9
-        if now - self.last_log_time >= self.log_period_sec:
-            self.last_log_time = now
-            self.get_logger().info(
-                "tracker pose x=%.3f y=%.3f yaw=%.3f"
-                % (position[0], position[1], yaw)
-            )
+        t = TransformStamped()
+        t.header.stamp = now
+        t.header.frame_id = "world"
+        t.child_frame_id = "tracker"
+        t.transform.translation.x = pos[0]
+        t.transform.translation.y = pos[1]
+        t.transform.translation.z = 0.0
+        t.transform.rotation.x = qx
+        t.transform.rotation.y = qy
+        t.transform.rotation.z = qz
+        t.transform.rotation.w = qw
+        self.tf.sendTransform(t)
 
 
-def main(args: Optional[list[str]] = None) -> None:
-    rclpy.init(args=args)
+def main():
+    rclpy.init()
     node = PerceptionNode()
-    try:
-        while rclpy.ok() and node.step():
-            node.publish_pose()
-            rclpy.spin_once(node, timeout_sec=0.0)
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
-
-
-if __name__ == "__main__":
-    main()
+    while rclpy.ok() and node.step():
+        node.publish()
+        rclpy.spin_once(node, timeout_sec=0.0)
+    node.destroy_node()
+    rclpy.shutdown()

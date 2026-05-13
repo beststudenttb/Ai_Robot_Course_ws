@@ -30,6 +30,7 @@ setup(
             'perception = mecanum_patrol.perception_node:main',
             'decision = mecanum_patrol.decision_node:main',
             'mission = mecanum_patrol.mission_node:main',
+            'logger = mecanum_patrol.logger_node:main',
         ],
     },
 )
